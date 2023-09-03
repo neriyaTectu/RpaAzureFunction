@@ -38,13 +38,13 @@ function generateTOTP(secretKey: string ) {
 }
 
 async function getSecretFromKeyVault(): Promise<string | undefined> {
-    const secretName = "test";
-    console.log(' new SecretClient');
+    const secretName = "PeleSecret";
+    console.log('getSecretFromKeyVault');
 
     const client = new SecretClient(`https://PazgasElectricityVault.vault.azure.net`, new DefaultAzureCredential());
     
     try {
-        console.log('try to getSecret ');
+        console.log('try to get secret: '+secretName);
         const secret = await client.getSecret(secretName);
         return secret.value;
     } catch (error) {
