@@ -4,34 +4,34 @@ import { PageHandler } from '../helpers/PageHandler';
 const pageHandler = new PageHandler();
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    
     try {
-        const phoneNumber = req.body.phoneNumber; 
-    
-        if (!phoneNumber) {
+        const password = req.body.password;
+        const customerId = req.body.customerId;
+
+        if (!password) {
             context.res = {
                 status: 400,
-                body: "Phone number is missing in the request body",
+                body: "Password is missing in the request body",
             };
             return;
         }
-        
-        if (!pageHandler.page) {
-            await pageHandler.initializePage();
-        }
-    
-        pageHandler.sendOtpToCutomer(phoneNumber);
-    
+
+        const result = pageHandler.checkMeterDetails(password, customerId);
+
         context.res = {
-            body: "Otp message sent to customer" 
+            body: {
+                MeterId: (await result).meterNumber,
+                IsMeterSmart: (await result).isMeterSmart,
+            }
         };
-     }
-     catch (error) {
+
+    } catch (error) {
         context.res = {
             status: 500,
             body: error.message,
-        };  
+        };
     }
+
 };
 
 export default httpTrigger;
